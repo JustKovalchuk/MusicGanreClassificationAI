@@ -41,7 +41,7 @@ def plot_images_encoded_in_latent_space(latent_representations, sample_labels):
 
 
 if __name__ == "__main__":
-    vae = VAE.load("model")
+    vae = VAE.load("data/model")
     x_train, y_train, x_test, y_test = load_mnist()
 
     num_sample_images_to_show = 10
