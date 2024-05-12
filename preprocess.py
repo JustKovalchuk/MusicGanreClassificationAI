@@ -3,6 +3,7 @@ import pickle
 
 import librosa
 import numpy as np
+from matplotlib import pyplot as plt
 
 
 class Loader:
@@ -43,6 +44,22 @@ class LogSpectrogramExtractor:
         spectrogram = np.abs(stft)
         log_spectrogram = librosa.amplitude_to_db(spectrogram)
         return log_spectrogram
+
+
+def plot_spect(log_spectrogram, sr=22050, hop_length=256):
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(log_spectrogram, sr=sr, hop_length=hop_length, y_axis='log', x_axis='time')
+    plt.show()
+
+
+def plot_spects(log_spectrograms, labels, sr=22050, hop_length=256, name="name"):
+    # plt.figure(figsize=(10, 4))
+    fig, ax = plt.subplots(1, len(log_spectrograms), figsize=(20, 5))
+    fig.suptitle(name, fontsize=20)
+    for i, spec in enumerate(log_spectrograms):
+        ax[i].set_title(labels[i])
+        librosa.display.specshow(spec, sr=sr, ax=ax[i], hop_length=hop_length, y_axis='log', x_axis='time')
+    plt.show()
 
 
 class MinMaxNormalizer:
@@ -121,6 +138,7 @@ class PreprocessingPipeline:
             signal = self._apply_padding(signal)
         feature = self.extractor.extract(signal)
         norm_feature = self.normalizer.normalize(feature)
+        print(norm_feature,norm_feature.shape, type(norm_feature))
         save_path = self.saver.save_feature(norm_feature, file_path)
         self._store_min_max_value(save_path, feature.min(), feature.max())
 
